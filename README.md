@@ -1,146 +1,139 @@
-# KEKOS C++ Edition - Raspberry Pi 4 Bare-Metal Kernel
+🍓 KEKOS C++ Edition - Raspberry Pi 4 Kernel
 
-This project is a bare-metal kernel for the Raspberry Pi 4 (ARM AArch64), written in modern C++. It is inspired by an older x86 C-based kernel but re-implements functionality from the ground up using C++ idioms and targeting the ARM architecture.
+    Ein Bare-Metal-Kernel für den Raspberry Pi 4, von Grund auf in modernem C++17 geschrieben. Dieses Projekt dient als Lernplattform für Low-Level-Systementwicklung auf der ARM-Architektur.
 
-## Features
+🚀 Features
 
-*   **Target Architecture:** ARMv8-A AArch64 (specifically for Raspberry Pi 4 - Cortex-A72).
-*   **Language:** Modern C++ (C++17) in a freestanding environment.
-    *   No Standard C++ Library (e.g., `std::vector`, `iostream`).
-    *   No exceptions (`-fno-exceptions`).
-    *   No RTTI (`-fno-rtti`).
-*   **Boot Process:** Produces a `kernel8.img` file compatible with the Raspberry Pi 4 bootloader.
-*   **Console I/O:** Uses the PL011 UART (serial console) for all text input and output.
-*   **Interrupt Handling:** Implements ARM GICv2 (GIC-400) for interrupt management and ARMv8-A exception handling.
-*   **System Timer:** Utilizes the ARM Generic Timer (CNTP EL1) for periodic interrupts.
-*   **Memory Management:**
-    *   Basic C++ runtime support (`new`/`delete` via a simple bump allocator).
-    *   MMU setup with identity mapping for the first 2GB of physical memory (2MB blocks), with distinct attributes for kernel code/data, RAM, and device memory.
-*   **In-Memory Filesystem:** A simple block-based filesystem running in RAM.
-    *   Supports file creation, deletion, reading, and writing.
-    *   Flat directory structure.
-*   **Interactive Shell:**
-    *   Provides commands like `ls`, `create <file>`, `cat <file>`, `rm <file>`, `edit <file>`, `echo`, `clear`, `help`.
-    *   Placeholders for `reboot` and `shutdown`.
-*   **Text Editor:**
-    *   Basic full-screen text editor (conceptually, UI is simple due to console limitations).
-    *   Supports loading, saving, and simple text manipulation (character typing, backspace, enter, tab).
+    🎯 Ziel-Architektur: ARMv8-A (AArch64), speziell für den Raspberry Pi 4 (Cortex-A72).
 
-## Project Structure
+    💻 Sprache: Modernes C++17 in einer Freestanding-Umgebung (ohne Standardbibliothek, Exceptions oder RTTI).
 
-```
+    👢 Boot-Prozess: Erzeugt ein kernel8.img, das direkt vom Raspberry Pi 4 Bootloader geladen werden kann.
+
+    ⌨️ Konsolen I/O: Nutzt die PL011 UART (serielle Konsole) für die gesamte Textein- und -ausgabe.
+
+    ⚡ Interrupts: Implementiert ARM GICv2 (GIC-400) und ARMv8-A Exception Handling.
+
+    🕒 System-Timer: Verwendet den ARM Generic Timer für periodische Interrupts.
+
+    🧠 Memory Management:
+
+        Grundlegende MMU-Einrichtung mit Identity Mapping (2MB-Blöcke).
+
+        Eigener, simpler Bump-Allocator für new und delete.
+
+    📁 In-Memory Filesystem: Ein einfaches, blockbasiertes Dateisystem im RAM.
+
+    🐚 Interaktive Shell: Mit Befehlen wie ls, cat, edit, echo, clear und help.
+
+    📝 Text-Editor: Ein einfacher Vollbild-Texteditor zum Bearbeiten von Dateien.
+
+🏗️ Projektstruktur
+
 .
-├── arch/arm/                 # ARM-specific code (boot, core, peripherals)
-├── include/                  # Global include directory (libcxx_support, kernel interfaces)
-├── kernel/                   # Core kernel components (main, console, fs, shell, editor)
-├── lib/                      # Utility libraries (kstd - minimal custom lib, printf)
-├── toolchain/                # Toolchain files (linker script)
-├── Makefile                  # Build system configuration
-└── README.md                 # This file
-```
+├── 📂 arch/arm/         # ARM-spezifischer Code (boot, core, peripherals)
+├── 📂 include/          # Globale Header (Kernel-Interfaces, C++ Support)
+├── 📂 kernel/           # Kern-Komponenten (main, console, fs, shell, editor)
+├── 📂 lib/              # Hilfsbibliotheken (kstd, printf)
+├── 📂 toolchain/        # Toolchain-Dateien (Linker-Script)
+├── 📜 Makefile          # Build-System
+└── 📖 README.md         # Diese Datei
 
-## Prerequisites
+🛠️ Voraussetzungen
 
-*   An AArch64 cross-compiler toolchain (e.g., `aarch64-elf-gcc`, `aarch64-elf-g++`, `aarch64-elf-ld`).
-    Ensure these are in your system's PATH or adjust the `PREFIX` variable in the `Makefile`.
-*   `make` utility.
-*   QEMU (for AArch64, e.g., `qemu-system-aarch64`) for emulation (optional but recommended for testing).
-*   A Raspberry Pi 4 and a way to load `kernel8.img` (e.g., via SD card with appropriate bootloader configuration, or TFTP).
+    Eine AArch64 Cross-Compiler Toolchain (z.B. aarch64-elf-gcc).
 
-## Building the Kernel
+    Das make Build-Tool.
 
-1.  **Clone the repository (if applicable).**
-2.  **Navigate to the project root directory.**
-3.  **Build the kernel:**
-    ```bash
-    make
-    ```
-    This will compile the source files and link them to produce:
-    *   `build/kernel8.elf`: The kernel in ELF format (useful for debugging).
-    *   `build/kernel8.img`: The raw binary image suitable for booting on a Raspberry Pi 4.
-    *   `build/kernel8.list`: A disassembly listing.
+    QEMU (qemu-system-aarch64) für die Emulation.
 
-4.  **Clean build files:**
-    ```bash
+    Ein Raspberry Pi 4 mit SD-Karte und einem USB-zu-TTL Serial Adapter für das Deployment.
+
+⚙️ Bauen des Kernels
+
+    Repository klonen (falls noch nicht geschehen).
+
+    Ins Projektverzeichnis wechseln.
+
+    Kernel bauen:
+    Bash
+
+make
+
+Dieser Befehl erstellt das build/-Verzeichnis mit dem Kernel-Image (kernel8.img), der ELF-Datei (kernel8.elf) und einer Disassembly-Liste.
+
+Build-Dateien aufräumen:
+Bash
+
     make clean
-    ```
-    This will remove the `build` directory and all compiled files.
 
-## Running with QEMU
+🏃‍♂️ Ausführen mit QEMU
 
-QEMU can be used to emulate a Raspberry Pi 4 and run the kernel image. Note that full RPi4 peripheral emulation in QEMU can be tricky or incomplete for some features, but it's excellent for testing CPU execution, basic UART, and GIC/timer functionality.
+Der schnellste Weg, den Kernel zu testen, ist über QEMU.
 
-1.  **Build the kernel** as described above to get `build/kernel8.img`.
+    Kernel bauen, um build/kernel8.img zu erhalten.
 
-2.  **Run QEMU:**
-    The `Makefile` includes a convenience target:
-    ```bash
+    QEMU starten: Das Makefile bietet einen einfachen Befehl:
+    Bash
+
     make qemu
-    ```
-    This typically executes a command similar to:
-    ```bash
-    qemu-system-aarch64 -M raspi4b -cpu cortex-a72 -m 1G -serial stdio -kernel build/kernel8.img
-    ```
-    *   `-M raspi4b`: Specifies the Raspberry Pi 4B machine model. (Note: QEMU's `raspi4b` support might alias to `raspi3b` in older versions or have limitations. The `virt` machine with a device tree might be another option for generic ARMv8 testing if RPi4-specific peripherals are not strictly needed for a given test.)
-    *   `-cpu cortex-a72`: Specifies the CPU model.
-    *   `-m 1G`: Allocates 1GB of RAM to the VM.
-    *   `-serial stdio`: Redirects the guest's first serial port (UART0) to the host's standard I/O. This is how you'll interact with the kernel console.
-    *   `-kernel build/kernel8.img`: Specifies the kernel image to load directly.
 
-3.  **Debugging with QEMU and GDB:**
-    To debug the kernel with GDB:
-    *   Start QEMU in a paused state, listening for a GDB connection:
-        ```bash
-        make qemu-debug
-        ```
-        This adds `-s -S` to the QEMU command line (`-s` is a shorthand for `-gdb tcp::1234`, `-S` freezes CPU at startup).
-    *   In another terminal, start GDB for AArch64:
-        ```bash
-        aarch64-elf-gdb
-        ```
-        Or, if your GDB is multi-arch:
-        ```bash
-        gdb
-        ```
-    *   Inside GDB, connect to QEMU and load symbols:
-        ```gdb
-        target remote localhost:1234
-        symbol-file build/kernel8.elf
-        # Set breakpoints, e.g., b kernel_main
-        # Then continue execution: c
-        ```
-        The `Makefile` also provides a `make debug` target that can simplify launching GDB.
+    Dadurch wird der Kernel in QEMU gestartet und die serielle Konsole mit deinem Terminal verbunden.
 
-## Deployment to Raspberry Pi 4
+🐞 Debugging mit QEMU und GDB
 
-1.  **Prepare an SD card:**
-    *   Ensure it has the latest Raspberry Pi bootloader firmware (`bootcode.bin`, `start4.elf`, `fixup4.dat`).
-    *   A `config.txt` file might be needed. A minimal one could be:
-        ```txt
+Für eine detaillierte Fehlersuche kannst du QEMU mit einem GDB-Server starten.
+
+    Starte QEMU im Debug-Modus:
+    Bash
+
+make qemu-debug
+
+Der Emulator wartet nun auf eine GDB-Verbindung auf Port 1234.
+
+Starte GDB in einem zweiten Terminal und verbinde dich:
+Code-Snippet
+
+    # Starte den AArch64 GDB
+    aarch64-elf-gdb
+
+    # In der GDB-Sitzung
+    target remote localhost:1234
+    symbol-file build/kernel8.elf
+
+    # Setze Breakpoints und starte die Ausführung
+    b kernel_main
+    c
+
+🍓 Deployment auf dem Raspberry Pi 4
+
+    SD-Karte vorbereiten:
+
+        Stelle sicher, dass die aktuelle Raspberry Pi Bootloader-Firmware (bootcode.bin, start4.elf etc.) vorhanden ist.
+
+        Erstelle eine config.txt mit folgendem Inhalt:
+        Plaintext
+
         arm_64bit=1
         enable_uart=1
-        kernel=kernel8.img # This line tells the firmware to load your kernel image.
-        ```
-        Ensure no other `kernel=` line specifies a different kernel. Some boot configurations might automatically look for `kernel8.img`.
+        kernel=kernel8.img
 
-2.  **Copy `build/kernel8.img`** to the root directory of the SD card's boot partition.
+    Kernel kopieren: Kopiere die build/kernel8.img in das Hauptverzeichnis der SD-Karte.
 
-3.  **Connect Serial Console:**
-    Connect a USB-to-TTL serial adapter to the Raspberry Pi 4's GPIO pins for UART0:
-    *   GPIO14 (TXD0) -> Adapter RX
-    *   GPIO15 (RXD0) -> Adapter TX
-    *   Ground -> Adapter Ground
-    Use a terminal emulator (minicom, PuTTY, screen) on your host machine, configured for the serial port (e.g., `/dev/ttyUSB0` on Linux) with settings: `115200 baud, 8 data bits, no parity, 1 stop bit` (8N1).
+    Serielle Konsole verbinden: Verbinde deinen USB-zu-TTL-Adapter mit den GPIO-Pins 14 (TX) und 15 (RX) sowie Ground. Öffne ein Terminalprogramm (z.B. minicom, PuTTY) mit den Einstellungen 115200 8N1.
 
-4.  **Power on the Raspberry Pi 4.** You should see kernel boot messages on your serial console and eventually the shell prompt.
+    Pi starten: Schließe den Strom an. Du solltest die Boot-Nachrichten deines Kernels in der seriellen Konsole sehen!
 
-## Future Development / Areas for Improvement
+💡 Zukünftige Entwicklung
 
-*   More robust memory management (e.g., buddy allocator, slab allocator).
-*   Proper user mode and process management.
-*   Advanced console features (ANSI escape codes for cursor positioning, colors, screen clearing).
-*   More complete device drivers (e.g., SD card, USB, network).
-*   Thread-safe C++ runtime components (e.g., for `__cxa_guard_acquire`).
-*   Detailed Device Tree Blob (DTB) parsing for hardware configuration.
-*   Refined editor UI and features.
-```
+    [ ] Robusteres Speichermanagement (Buddy/Slab Allocator).
+
+    [ ] User-Mode und Prozess-Management.
+
+    [ ] Erweiterte Konsolen-Features (ANSI Escape Codes).
+
+    [ ] Weitere Treiber (SD-Karte, USB, Netzwerk).
+
+    [ ] Device Tree Blob (DTB) Parsing für flexible Hardware-Konfiguration.
+
+    [ ] Besseres Editor-UI und mehr Features.
