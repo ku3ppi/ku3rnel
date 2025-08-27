@@ -13,6 +13,11 @@
 
 ---
 
+⚠️ Disclaimer
+---
+Dieses Projekt ist ein reines Lern- und Hobbyprojekt. Es dient ausschließlich dazu, die Grundlagen der Betriebssystementwicklung zu erforschen und zu verstehen. Es ist ausdrücklich nicht für den Einsatz in einer produktiven Umgebung gedacht. Die Verwendung erfolgt auf eigene Gefahr!
+---
+
 ## 🚀 Features
 
 * **🎯 Ziel-Architektur:** ARMv8-A (AArch64), speziell für den Raspberry Pi 4 (Cortex-A72).
